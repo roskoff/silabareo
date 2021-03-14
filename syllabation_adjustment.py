@@ -87,9 +87,13 @@ class SyllableAdjustment:
         result = re.sub('-y$', 'i', result)
         result = re.sub('y$', 'i', result)
 
-        # Las reglas 15, 16 y 17 no hacen falta implementar debido a que son
-        # simplemente para limpieza de los guiones. Por practicidad, ya se
-        # fueron elimiminando a medida que se aplicaban las reglas anteriores
+        # Por practicidad ya se fueron elimiminando los guiones a medida que
+        # se aplicaban las reglas anteriores. Aún así, por las dudas hay que
+        # implementar las reglas 15, 16 y 17 (en las pruebas preliminares 
+        # surgieron errores).
+        result = re.sub('^-', '', result)
+        result = re.sub('--', '-', result)
+        result = re.sub('-$', '', result)
         return result
 
 if __name__ == "__main__":
