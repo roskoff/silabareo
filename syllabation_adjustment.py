@@ -45,9 +45,13 @@ class SyllableAdjustment:
         # Estas reglas derivadas son necesarias ya que no hacemos
         # la transcripción grafema-fonema
         # Regla 7': { c - c } = { Ø - c } (ej. staccato)
-        result = re.sub('([aáeéiíoóuú])c-c([^-])', '\\1-c\\2', result)
+        # result = re.sub('([aáeéiíoóuú])c-c([^-])', '\\1-c\\2', result)
+        # (Descartamos 7', debido a que no conviene la elición para palabras
+        # en español, ej. "elecciones" -> "e-le-cio-nes", "acción" -> "a-ción"
+
         # Regla 7'': { c - q } = { Ø - q } (ej. becqueriano)
         result = re.sub('([aáeéiíoóuú])c-q([^-])', '\\1-q\\2', result)
+        
         # Regla 7''': { c - k } = { Ø - k } (ej. jockey, stocks)
         result = re.sub('([aáeéiíoóuú])c-k([^-s])', '\\1-k\\2', result)
 

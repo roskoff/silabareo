@@ -122,3 +122,5 @@ vestfaliano
 vichy
 whisky
 windsurf
+elecciones
+acción

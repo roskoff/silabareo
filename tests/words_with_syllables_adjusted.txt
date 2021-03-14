@@ -98,7 +98,7 @@ rug-bi
 es-pa-rrin
 es-prin
 es-prins
-es-ta-ca-to
+es-tac-ca-to
 es-taf
 es-tafs
 es-tan
@@ -122,3 +122,5 @@ ves-fa-lia-no
 vi-chi
 whis-ki
 win-surf
+e-lec-cio-nes
+ac-ción
