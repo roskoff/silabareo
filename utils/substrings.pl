@@ -13,8 +13,8 @@ if (!defined $ARGV[1]) {
 $fn = $ARGV[0];
 if (!-e $fn) { $fn = "hyphen.us"; }
 open HYPH, $fn;
+open OUT, ">$ARGV[1]";
 $encoding = $ARGV[2];
-open (OUT, ">$ARGV[1]");
 $lhmin = $ARGV[3];
 $rhmin = $ARGV[4];
 if (defined $encoding) { print OUT "$encoding\n"; }

@@ -25,6 +25,7 @@ DOUBLE_CONSONANTS = ["rr", "ll", "ch"]
 def initialize(filename: str):
     global output_rules_files
     output_rules_files = open(filename, mode="w")
+    output_rules_files.write('\n')
 
 def cleanup():
     if output_rules_files != None:
