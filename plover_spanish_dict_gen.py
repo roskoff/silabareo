@@ -396,9 +396,37 @@ def syll_stroke(s):
             pass
 
         try:
+            # "ll" + vowel + consonant_rhs
+            if s[0:2] == "ll":
+                return "KWR" + VOWELS[s[2]] + CONSONANTS_RHS[s[3]]
+        except KeyError:
+            pass
+
+        try:
             if s[0:2] == "ch":
                 # "ch" + dipthong
                 return "KH" + DIPTHONGS[s[2:]]
+        except KeyError:
+            pass
+
+        try:
+            if s[0:2] == "ch":
+                # "ch" + vowel + consonant_rhs
+                return "KH" + VOWELS[s[2]] + CONSONANTS_RHS[s[3]]
+        except KeyError:
+            pass
+
+        try:
+            if s[2:] == 'rs':
+                # consonant_lhs + vowel + 'rs'
+                return CONSONANTS_LHS[s[0]] + VOWELS[s[1]] + 'RS'
+        except KeyError:
+            pass
+
+        try:
+            if s[2:] == 'ns':
+                # consonant_lhs + vowel + 'ns'
+                return CONSONANTS_LHS[s[0]] + VOWELS[s[1]] + 'PBS'
         except KeyError:
             pass
 
