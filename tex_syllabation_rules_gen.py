@@ -5,7 +5,7 @@ import sys
 output_rules_files = None
 
 ALPHABET = "abcdefghijklmnñopqrstuvwxyz"
-VOWELS = "aeiou"
+VOWELS = "aeiouü"
 VOWELS_WITH_ACCENT_MARK = "áéíóú"
 ALL_VOWELS = VOWELS + VOWELS_WITH_ACCENT_MARK
 CONSONANTS_LHS = "bcdfghjklmnñpqrstvwxyz"
@@ -94,13 +94,13 @@ def write_rules():
             add_rule(v1 + "1" + c + "r")
 
     # Regla 6: C s V --> C - s V
-    for v1 in "bcdknlr":
+    for v1 in "bcdknlrx":
         for v2 in ALL_VOWELS:
             add_rule(v1 + "1s" + v2)
 
     # Regla 7: {s, z, x, c, m, ñ, L} C = {s, z, x, c, m, ñ, L} - C
     for c2 in CONSONANTS_LHS:
-        for c1 in "szjcmñ":
+        for c1 in "szjxcmñ":
             # ch, conflicto en Regla 7
             # cr y cl, conflicto en Regla 4
             if (c1 + c2 in ['ch', 'cr', 'cl']): continue
