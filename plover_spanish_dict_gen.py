@@ -2,6 +2,7 @@
 
 import sys
 import time
+from collections import OrderedDict
 from utils.hyphenate import Hyphenator
 from syllabation_adjustment import SyllableAdjustment
 import json
@@ -49,6 +50,16 @@ DIPTHONGS = {
     "üe": "*E",
     "uo": "OU",
     "uó": "O*U"
+}
+
+TRIPTHONGS = {
+    "iái": "A*EU",
+    "uái": "HA*EU",
+    "iéi": "O*EU",
+    "uéi": "HO*EU",
+    "üéi": "HO*EU",
+    "aié": "HA*E",
+    "auí": "HA*EU"
 }
 
 CONSONANTS_LHS = {
@@ -243,6 +254,8 @@ def syll_stroke(s):
         if s == "gui": return "TKPWEU"
         if s == "gué": return "TKPW*E"
         if s == "guí": return "TKPW*EU"
+        if s == "güé": return "TKPW*E"
+        if s == "güí": return "TKPW*EU"
 
         # que, qui, qué, quí
         if s == "que": return "KE"
@@ -347,7 +360,6 @@ def syll_stroke(s):
                 return "TKPW" + DIPTHONGS[s[2:]]
 
             if s[0:3] in ["que", "qui", "qué"]:
-                print("Coloquio" + s)
                 return "K" + DIPTHONGS[s[2:]]
 
         except KeyError:
@@ -455,6 +467,12 @@ def syll_stroke(s):
         except KeyError:
             pass
 
+        try:
+            # consonant_lhs + tripthong
+            return CONSONANTS_LHS[s[0]] + TRIPTHONGS[s[1:]]
+        except KeyError:
+            pass
+
         # Traducción directa
         if s == 'buei': return "PW*E"
         if s == 'guai': return "TKPWAEU"
@@ -463,8 +481,30 @@ def syll_stroke(s):
     if len(s) == 5:
 
         try:
+            if s[0:3] in ["gue", "gui", "gué"]:
+                return "TKPW" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
+
+            if s[0:3] in ["que", "qui", "qué"]:
+                return "K" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
+
+        except KeyError:
+            pass
+
+        try:
             if s[0:2] == "rr":
                 return "WR" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
+        except KeyError:
+            pass
+
+        try:
+            if s[0:2] == "ll":
+                return "KWR" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
+        except KeyError:
+            pass
+
+        try:
+            if s[0:2] == "ch":
+                return "KH" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
         except KeyError:
             pass
 
@@ -510,6 +550,12 @@ def syll_stroke(s):
         except KeyError:
             pass
 
+        try:
+            # consonant_lhs + tripthong + consonant_rhs
+            return CONSONANTS_LHS[s[0]] + TRIPTHONGS[s[1:4]] + CONSONANTS_RHS[s[4]]
+        except KeyError:
+            pass
+
         # Traducción directa
         if s == 'guien': return "TKPW*EPB"
         if s == 'guién': return "TKPW*EPB"
@@ -521,11 +567,55 @@ def syll_stroke(s):
         if s == 'quien': return "K*EPB"
         if s == 'quiel': return "K*EL"
         if s == 'quies': return "K*ES"
+        if s == 'quiad': return "KA*D"
         if s == 'quiar': return "KA*R"
         if s == 'quian': return "KA*PB"
+        if s == 'quián': return "KA*PB"
         if s == 'quial': return "KA*L"
         if s == 'quias': return "KA*S"
+        if s == 'quiás': return "KA*S"
         if s == 'quios': return "KO*S"
+
+    if len(s) == 6:
+
+        try:
+            if s[0:2] == "qu":
+                return "K" + TRIPTHONGS[s[2:5]] + CONSONANTS_RHS[s[5]]
+
+        except KeyError:
+            pass
+
+        try:
+            if s[0:2] == "rr":
+                return "WR" + TRIPTHONGS[s[2:5]] + CONSONANTS_RHS[s[5]]
+        except KeyError:
+            pass
+
+        try:
+            if s[0:2] == "ll":
+                return "KWR" + TRIPTHONGS[s[2:5]] + CONSONANTS_RHS[s[5]]
+        except KeyError:
+            pass
+
+        try:
+            if s[0:2] == "ll":
+                return "KWR" + TRIPTHONGS[s[2:5]] + CONSONANTS_RHS[s[5]]
+        except KeyError:
+            pass
+
+        try:
+            # consonant_lhs_for_l + "l" + tripthong + consonant_rhs
+            if s[1] == 'l':
+                return CONSONANTS_LHS_FOR_R[s[0]] + "HR" + TRIPTHONGS[s[2:5]] + CONSONANTS_RHS[s[5]]
+        except KeyError:
+            pass
+
+        try:
+            # consonant_lhs_for_r + "r" + tripthong + consonant_rhs
+            if s[1] == 'r':
+                return CONSONANTS_LHS_FOR_R[s[0]] + "R" + TRIPTHONGS[s[2:5]] + CONSONANTS_RHS[s[5]]
+        except KeyError:
+            pass
 
     return "~" + s + "~"
 
@@ -578,7 +668,7 @@ if __name__ == "__main__":
     syllable_adjustment = SyllableAdjustment()
 
     total_words = len(wordlist)
-    compiled_dict = {}
+    compiled_dict = OrderedDict()
     for i in range(0, total_words):
         hyphenated_word = hyphenator.hyphenate_word_as_string(wordlist[i])
         sylls = syllable_adjustment.adjust(hyphenated_word)
@@ -590,7 +680,8 @@ if __name__ == "__main__":
         if (compiled_dict.get(stroke) == None):
             compiled_dict[stroke] = wordlist[i]
         else:
-            compiled_dict[stroke + "##" + str(i)] = wordlist[i]
+            duplicated_index = list(compiled_dict.keys()).index(stroke)
+            compiled_dict[stroke + "##" + str(duplicated_index)] = wordlist[i]
 
         print ("{:.2f}%".format(i / float(total_words) * 100), end='\r')
 
