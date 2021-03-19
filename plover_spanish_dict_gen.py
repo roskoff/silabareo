@@ -22,6 +22,8 @@ VOWELS = {
 DIPTHONGS = {
     "ui": "*EU",
     "uí": "*EU",
+    "üi": "*EU",
+    "üí": "*EU",
     "iu": "*U",
     "iú": "*U",
     "ai": "AEU",
@@ -44,6 +46,7 @@ DIPTHONGS = {
     "uá": "A*",
     "ue": "*E",
     "ué": "*E",
+    "üe": "*E",
     "uo": "OU",
     "uó": "O*U"
 }
@@ -302,6 +305,18 @@ def syll_stroke(s):
         except KeyError:
             pass
 
+        try:
+            if s[1:] == 'ns':
+                # vowel + 'ns'
+                return VOWELS[s[0]] + 'PBS'
+        except KeyError:
+            pass
+
+        # Traducción directa
+        if s == 'obs': return 'OBS'
+        if s == 'abs': return 'ABS'
+        if s == 'ads': return 'ADZ'
+
     if len(s) == 4:
         try:
             if s[0:3] == "gue":
@@ -440,6 +455,11 @@ def syll_stroke(s):
         except KeyError:
             pass
 
+        # Traducción directa
+        if s == 'buei': return "PW*E"
+        if s == 'guai': return "TKPWAEU"
+        if s == 'subs': return "SUBS"
+
     if len(s) == 5:
 
         try:
@@ -475,6 +495,37 @@ def syll_stroke(s):
                 return CONSONANTS_LHS_FOR_R[s[0]] + "R" + VOWELS[s[2]] + "PBS"
         except KeyError:
             pass
+
+        try:
+            # consonant_lhs_for_l + "l" + dipthong + consonant_rhs
+            if s[1] == 'l':
+                return CONSONANTS_LHS_FOR_R[s[0]] + "HR" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
+        except KeyError:
+            pass
+
+        try:
+            # consonant_lhs_for_r + "r" + dipthong + consonant_rhs
+            if s[1] == 'r':
+                return CONSONANTS_LHS_FOR_R[s[0]] + "R" + DIPTHONGS[s[2:4]] + CONSONANTS_RHS[s[4]]
+        except KeyError:
+            pass
+
+        # Traducción directa
+        if s == 'guien': return "TKPW*EPB"
+        if s == 'guién': return "TKPW*EPB"
+        if s == 'guian': return "TKPWA*PB"
+        if s == 'guián': return "TKPWA*PB"
+        if s == 'guial': return "TKPWA*L"
+        if s == 'guiar': return "TKPWA*R"
+        if s == 'quier': return "K*ER"
+        if s == 'quien': return "K*EPB"
+        if s == 'quiel': return "K*EL"
+        if s == 'quies': return "K*ES"
+        if s == 'quiar': return "KA*R"
+        if s == 'quian': return "KA*PB"
+        if s == 'quial': return "KA*L"
+        if s == 'quias': return "KA*S"
+        if s == 'quios': return "KO*S"
 
     return "~" + s + "~"
 
